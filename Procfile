@@ -1,1 +1,1 @@
-web: node ./main.js --minUptime 10000 --spinSleepTime 1000
+web: bundle exec ./script/server
