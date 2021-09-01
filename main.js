@@ -9,6 +9,7 @@ const readline = require('readline');
 const axios = require("axios");
 
 const BitlyClient = require('bitly').BitlyClient;
+const { pid } = require("process");
 const bitly = new BitlyClient('17c1efff96bfe6bd880e21886a035bfe673b486d');
 
 dotenv.config();
@@ -47,7 +48,9 @@ async function tweetEvent(tweet) {
   console.log(`Tweet url: ${replying_url}`)
   console.log("")
 
-  const subprocess = youtubedl.raw(replying_url, { dumpSingleJson: true });
+  let portID = 1238 || process.env.PORT;
+
+  const subprocess = youtubedl.raw(replying_url, { dumpSingleJson: true }, { pid: portID });
   
   console.log(`Running subprocess as ${subprocess.pid}`);
   
@@ -85,8 +88,6 @@ async function tweetEvent(tweet) {
           console.log(obj)
 
           protocols = [];
-          var final_link;
-
           obj.formats.forEach(format => {
             if(format.protocol == "https") {
               protocols.push(format.url)
@@ -116,22 +117,3 @@ async function tweetEvent(tweet) {
     }
   });
 };
-
-// downloader.post('media/upload', { media_data: videoReadableBufferStream }, function (err, data, response) {
-//     // now we can assign alt text to the media, for use by screen readers and
-//     // other text-based presentations and interpreters
-//     var mediaIdStr = data.media_id_string
-//     var altText = "Vídeo baixado com sucesso"
-//     var meta_params = { media_id: mediaIdStr, alt_text: { text: altText } }
-
-//     downloader.post('media/metadata/create', meta_params, function (err, data, response) {
-//       if (!err) {
-//         // now we can reference the media and post a tweet (media will attach to the tweet)
-//         var params = { status: `@${user_screen_name} aqui está seu vídeo baixado`, media_ids: [mediaIdStr] }
-
-//         downloader.post('statuses/update', params, function (err, data, response) {
-//           console.log(data)
-//         })
-//       }
-//     })
-// })
