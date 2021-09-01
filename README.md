@@ -3,10 +3,9 @@
 
 Baixe facilmente os vídeos do twitter que te interessaram usando a nossa conta.
 
-### Marque @baixesaporra no twitter e receba um link de download para seus vídeos
+Marque @baixesaporra no twitter e receba um link de download para seus vídeos
 
-## Mais informações sobre o projeto
-Fale comigo no meu twitter: @wluvigor
+#### Para mais informações, fale comigo no meu twitter: @wluvigor
 
 ### Totalmente feito usando NodeJs e a biblioteca Twit (fora bibliotecas adicionais)
 
