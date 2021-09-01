@@ -1,1 +1,1 @@
-web: bundle exec rails s -p $PORT
+web: node ./index.js --minUptime 10000 --spinSleepTime 1000 --PORT 1239
