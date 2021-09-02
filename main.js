@@ -126,7 +126,7 @@ app.listen(PORT, () => {
       }
     });
   };
-})
+});
 
 app.get("/", (req, res) => [
   res.send("TWITTER DOWNLOADER")
