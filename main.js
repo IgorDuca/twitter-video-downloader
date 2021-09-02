@@ -46,10 +46,9 @@ app.listen(PORT, () => {
     console.log(tweet)
     console.log("")
   
-    var tweet_owner_screenname = tweet.in_reply_to_screen_name
-    var tweet_reply_id = tweet.in_reply_to_status_id_str
+    var tweet_owner_screenname = tweet.in_reply_to_screen_name;
+    var tweet_reply_id = tweet.in_reply_to_status_id_str;
     var tweet_id = tweet.id_str;
-    var user_screen_name = tweet.user.screen_name
   
     var replying_url = `https://twitter.com/${tweet_owner_screenname}/status/${tweet_reply_id}`
   
@@ -126,6 +125,20 @@ app.listen(PORT, () => {
       }
     });
   };
+
+  var followerStream = downloader.stream('user');
+
+  followerStream.on('follow', function(json) {
+    var res = {
+      status: `Muito obrigado por seguir, @${user.screen_name}`
+    };
+  
+    downloader.post('statuses/update', res,
+      function(err, data, response) {
+        console.log(data);
+      }
+    );
+  })
 });
 
 app.get("/", (req, res) => [
