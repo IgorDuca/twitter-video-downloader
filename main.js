@@ -26,45 +26,45 @@ app.listen(PORT, () => {
 
   const downloader = new Twit({
     consumer_key: tokens.CONSUMER_KEY,
-
+  
     consumer_secret: tokens.CONSUMER_SECRET,
     access_token: tokens.ACCESS_TOKEN,
-
+  
     access_token_secret: tokens.ACCESS_TOKEN_SECRET,
     timeout_ms: 60 * 1000
   });
-
+  
   var stream = downloader.stream('statuses/filter', { track: ['@baixesaporra'] });
   stream.on('tweet', tweetEvent);
-
+  
   console.log("")
   console.log("ESPERANDO TWEETS...")
   console.log("")
-
+  
   async function tweetEvent(tweet) {
     console.log("")
     console.log(tweet)
     console.log("")
-
+  
     var tweet_owner_screenname = tweet.in_reply_to_screen_name
     var tweet_reply_id = tweet.in_reply_to_status_id_str
     var tweet_id = tweet.id_str;
     var user_screen_name = tweet.user.screen_name
-
+  
     var replying_url = `https://twitter.com/${tweet_owner_screenname}/status/${tweet_reply_id}`
-
+  
     console.log("")
     console.log(`Tweet url: ${replying_url}`)
     console.log("")
-
+  
     let portID = 1238 || process.env.PORT;
-
+  
     const subprocess = youtubedl.raw(replying_url, { dumpSingleJson: true }, { pid: portID });
     
     console.log(`Running subprocess as ${subprocess.pid}`);
     
     subprocess.stdout.pipe(fs.createWriteStream('output.json'));
-
+  
     subprocess.stdout.on('end', function () {
       var stream = fs.createReadStream("./output.json", {flags: 'r', encoding: 'utf-8'});
       var buf = '';
@@ -93,9 +93,9 @@ app.listen(PORT, () => {
       
           if (line.length > 0) { // ignore empty lines
             var obj = JSON.parse(line); // parse the JSON
-
+  
             console.log(obj)
-
+  
             protocols = [];
             obj.formats.forEach(format => {
               if(format.protocol == "https") {
@@ -103,12 +103,12 @@ app.listen(PORT, () => {
               }
               else return false;
             })
-
+  
             reply = async function(video) {
-
+  
               const response = await bitly.shorten(video);
               var link = response.link;
-
+  
               var res = {
                 status: `Baixei, saporra, @${tweet.user.screen_name}, segue pra dar aquela moral, vai` + `\n${link}`,
                 in_reply_to_status_id: '' + tweet_id
@@ -120,7 +120,7 @@ app.listen(PORT, () => {
                 }
               );
             }
-
+  
             reply(protocols[0]);
           }
       }
@@ -128,6 +128,6 @@ app.listen(PORT, () => {
   };
 })
 
-app.get("/", (req, res) => {
-  res.send("TWITTER BOT")
-})
+app.get("/", (req, res) => [
+  res.send("TWITTER DOWNLOADER")
+])
