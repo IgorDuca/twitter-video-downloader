@@ -126,9 +126,9 @@ app.listen(PORT, () => {
     });
   };
 
-  var followerStream = downloader.stream('user');
+  var followerStream = downloader.stream();
 
-  followerStream.on('follow', function(json) {
+  followerStream.on('follow', function() {
     var res = {
       status: `Muito obrigado por seguir, @${user.screen_name}`
     };
