@@ -125,20 +125,6 @@ app.listen(PORT, () => {
       }
     });
   };
-
-  var followerStream = downloader.stream();
-
-  followerStream.on('follow', function() {
-    var res = {
-      status: `Muito obrigado por seguir, @${user.screen_name}`
-    };
-  
-    downloader.post('statuses/update', res,
-      function(err, data, response) {
-        console.log(data);
-      }
-    );
-  })
 });
 
 app.get("/", (req, res) => [
