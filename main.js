@@ -108,7 +108,7 @@ app.listen(PORT, () => {
               const response = await bitly.shorten(video);
               var link = response.link;
   
-              downloader.get('followers/ids', { screen_name: "baixesaporra" },  function (err, data, response) {
+              downloader.get('followers/ids', { screen_name: "baixesaporra" },  function (err, data) {
 
                 console.log(data)
   
