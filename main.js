@@ -107,36 +107,21 @@ app.listen(PORT, () => {
   
               const response = await bitly.shorten(video);
               var link = response.link;
-
-              console.log("")
-              console.log("CHECANDO SE SEGUE O PERFIL")
-              console.log("")
   
-              downloader.get('followers/ids', { screen_name: "baixesaporra" },  function (err, data) {
-
-                console.log(data)
+              var res = {
+                status: `Baixei, saporra, @${tweet.user.screen_name}, segue pra dar aquela moral, vai` + `\n${link}`,
+                in_reply_to_status_id: '' + tweet_id
+              };
+            
+              downloader.post('statuses/update', res,
+                function(err, data, response) {
+                  console.log(data);
+                }
+              );
+            }
   
-                data.ids.forEach(id => {
-                  if(tweet.user.id_str == id) {
-                    reply(protocols[0]);
-                  }
-                  else {
-                    var res = {
-                      status: `Ei, @${tweet.user.screen_name}, meu patrão, agora você precisa me seguir pra eu poder te ajudar 😬`,
-                      in_reply_to_status_id: '' + tweet_id
-                    };
-          
-                    downloader.post('statuses/update', res,
-                    function(err, data, response) {
-                      console.log(data);
-                    }
-                  );
-                  }
-                })
-            })
             reply(protocols[0]);
           }
-        }
       }
     });
   };
