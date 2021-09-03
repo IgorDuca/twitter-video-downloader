@@ -97,17 +97,30 @@ app.listen(PORT, () => {
             console.log(obj)
   
             protocols = [];
+
             obj.formats.forEach(format => {
               if(format.protocol == "https") {
-                protocols.push(format.url)
+
+                var resolution = `${format.height}x${format.width}`;
+
+                var pushData = {
+                  url: format.url,
+                  resolution: resolution
+                }
+
+                console.log(pushData);
+
+                protocols.push(pushData);
               }
               else return false;
             })
+
+            async function shortenUrl(link) {
+              const response = await bitly.shorten(link);
+              return response.link;
+            }
   
-            reply = async function(video) {
-  
-              const response = await bitly.shorten(video);
-              var link = response.link;
+            reply = async function(link) {
 
               downloader.get('followers/ids', { screen_name: 'baixesaporra' },  function (err, data, response) {
                 var ids = data.ids;
@@ -126,7 +139,7 @@ app.listen(PORT, () => {
 
                 if(id_in_list == true) {
                   var res = {
-                    status: `Baixei, saporra, @${tweet.user.screen_name}, segue pra dar aquela moral, vai` + `\n${link}`,
+                    status: `Baixei, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar seu vídeo: ` + `\n${link}`,
                     in_reply_to_status_id: '' + tweet_id
                   };
                 
@@ -150,8 +163,49 @@ app.listen(PORT, () => {
                 }
               })
             }
-  
-            reply(protocols[0]);
+
+            async function posting_results(urls) {
+
+              console.log("")
+              console.log("URLS")
+              console.log(urls)
+              console.log("")
+
+              var string_list = [];
+
+              urls.forEach(url => [
+                string_list.push(`${url.shortenUrl} (${url.resolution})`)
+              ])
+
+              var url_string = string_list.join("\n");
+
+              reply(url_string);
+            }
+
+            async function protocol_shortening() {
+
+              var urls = [];
+
+              var length = protocols.length;
+
+              protocols.forEach(async protocol => {
+                var url = await shortenUrl(protocol.url);
+                urls.push({
+                  shortenUrl: url,
+                  resolution: `${protocol.resolution}`
+                });
+                console.log("")
+                console.log(url)
+                console.log(`Total de urls: ${urls.length}/${protocols.length}`)
+                console.log("")
+
+                if(urls.length === length) {
+                  posting_results(urls);
+                }
+              })
+            }
+
+            protocol_shortening();
           }
       }
     });
