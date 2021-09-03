@@ -107,13 +107,17 @@ app.listen(PORT, () => {
   
               const response = await bitly.shorten(video);
               var link = response.link;
+
+              console.log("")
+              console.log("CHECANDO SE SEGUE O PERFIL")
+              console.log("")
   
               downloader.get('followers/ids', { screen_name: "baixesaporra" },  function (err, data) {
 
                 console.log(data)
   
                 data.ids.forEach(id => {
-                  if(tweet.user.id == id) {
+                  if(tweet.user.id_str == id) {
                     reply(protocols[0]);
                   }
                   else {
