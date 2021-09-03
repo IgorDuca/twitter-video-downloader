@@ -63,6 +63,7 @@ app.listen(PORT, () => {
     console.log(`Running subprocess as ${subprocess.pid}`);
     
     subprocess.stdout.pipe(fs.createWriteStream('output.json'));
+    subprocess.stderr.pipe(fs.createWriteStream('error.txt'));
   
     subprocess.stdout.on('end', function () {
       var stream = fs.createReadStream("./output.json", {flags: 'r', encoding: 'utf-8'});
@@ -107,17 +108,47 @@ app.listen(PORT, () => {
   
               const response = await bitly.shorten(video);
               var link = response.link;
-  
-              var res = {
-                status: `Baixei, saporra, @${tweet.user.screen_name}, segue pra dar aquela moral, vai` + `\n${link}`,
-                in_reply_to_status_id: '' + tweet_id
-              };
-            
-              downloader.post('statuses/update', res,
-                function(err, data, response) {
-                  console.log(data);
+
+              downloader.get('followers/ids', { screen_name: 'baixesaporra' },  function (err, data, response) {
+                var ids = data.ids;
+
+                console.log("")
+                console.log(ids)
+                console.log("")
+
+                var id_list = [];
+
+                ids.forEach(id => {
+                  id_list.push(id);
+                });
+
+                var id_in_list = id_list.includes(tweet.user.id)
+
+                if(id_in_list == true) {
+                  var res = {
+                    status: `Baixei, saporra, @${tweet.user.screen_name}, segue pra dar aquela moral, vai` + `\n${link}`,
+                    in_reply_to_status_id: '' + tweet_id
+                  };
+                
+                  downloader.post('statuses/update', res,
+                    function(err, data, response) {
+                      console.log(data);
+                    }
+                  );
                 }
-              );
+                else {
+                  var res = {
+                    status: `Ei, patrão, @${tweet.user.screen_name}, você precisa me seguir pra eu te ajudar`,
+                    in_reply_to_status_id: '' + tweet_id
+                  };
+                
+                  downloader.post('statuses/update', res,
+                    function(err, data, response) {
+                      console.log(data);
+                    }
+                  );
+                }
+              })
             }
   
             reply(protocols[0]);
