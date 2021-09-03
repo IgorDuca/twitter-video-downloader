@@ -151,7 +151,7 @@ app.listen(PORT, () => {
                 }
                 else {
                   var res = {
-                    status: `Ei, patrão, @${tweet.user.screen_name}, você precisa me seguir pra eu te ajudar`,
+                    status: `Oi, @${tweet.user.screen_name}, você precisa me seguir pra eu te ajudar, então me siga, apague seu tweet e me marque de novo que baixo pra você 🙏`,
                     in_reply_to_status_id: '' + tweet_id
                   };
                 
