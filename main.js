@@ -140,28 +140,28 @@ app.listen(PORT, () => {
                 var id_in_list = id_list.includes(tweet.user.id)
 
                 if(id_in_list == true) {
-                  // var res = {
-                  //   status: `Baixei, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar seu vídeo: ` + `\n${link}`,
-                  //   in_reply_to_status_id: '' + tweet_id
-                  // };
+                  var res = {
+                    status: `Baixei, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar seu vídeo: ` + `\n${link}`,
+                    in_reply_to_status_id: '' + tweet_id
+                  };
                 
-                  // downloader.post('statuses/update', res,
-                  //   function(err, data, response) {
-                  //     console.log(data);
-                  //   }
-                  // );
+                  downloader.post('statuses/update', res,
+                    function(err, data, response) {
+                      console.log(data);
+                    }
+                  );
                 }
                 else {
-                  // var res = {
-                  //   status: `Ei, patrão, @${tweet.user.screen_name}, você precisa me seguir pra eu te ajudar`,
-                  //   in_reply_to_status_id: '' + tweet_id
-                  // };
+                  var res = {
+                    status: `Ei, patrão, @${tweet.user.screen_name}, você precisa me seguir pra eu te ajudar`,
+                    in_reply_to_status_id: '' + tweet_id
+                  };
                 
-                  // downloader.post('statuses/update', res,
-                  //   function(err, data, response) {
-                  //     console.log(data);
-                  //   }
-                  // );
+                  downloader.post('statuses/update', res,
+                    function(err, data, response) {
+                      console.log(data);
+                    }
+                  );
                 }
               })
             }
