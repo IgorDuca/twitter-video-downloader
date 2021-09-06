@@ -49,6 +49,8 @@ app.listen(PORT, () => {
     var tweet_owner_screenname = tweet.in_reply_to_screen_name;
     var tweet_reply_id = tweet.in_reply_to_status_id_str;
     var tweet_id = tweet.id_str;
+
+    if(tweet.in_reply_to_screen_name == "baixesaporra") return false;
   
     var replying_url = `https://twitter.com/${tweet_owner_screenname}/status/${tweet_reply_id}`
   
