@@ -12,6 +12,7 @@ const cors = require("cors");
 
 const BitlyClient = require('bitly').BitlyClient;
 const { pid } = require("process");
+const { all } = require("async");
 const bitly = new BitlyClient('17c1efff96bfe6bd880e21886a035bfe673b486d');
 
 dotenv.config();
@@ -93,14 +94,16 @@ app.listen(PORT, () => {
 
             console.log(obj)
 
-            protocols = [];
+            var all_protocols = [];
+            var protocols = [];
 
             obj.formats.forEach(format => {
               if(format.protocol == "https") {
 
                 var resolution = `(${format.height}x${format.width})`;
 
-                if(resolution == "(undefinedxundefined)") resolution = ""
+                if(resolution == "(undefinedxundefined)") return false;
+                if(resolution == "(nullxnull)") return false;
 
                 var pushData = {
                   url: format.url,
@@ -109,7 +112,12 @@ app.listen(PORT, () => {
 
                 console.log(pushData);
 
-                protocols.push(pushData);
+                all_protocols.forEach(all => {
+                  if(all.resolution == resolution) return false;
+                  else {
+                    all_protocols.push(pushData);
+                  }
+                })
               }
               else return false;
             })
@@ -159,13 +167,6 @@ app.listen(PORT, () => {
                     }
                   );
                 }
-
-                downloader.post('statuses/update', res,
-                  function(err, data, response) {
-                    console.log(data);
-                  }
-                );
-
               })
             }
 
