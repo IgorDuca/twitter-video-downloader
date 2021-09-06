@@ -9,10 +9,7 @@ const readline = require('readline');
 const axios = require("axios");
 const express = require("express");
 const cors = require("cors");
-
 const BitlyClient = require('bitly').BitlyClient;
-const { pid } = require("process");
-const { all } = require("async");
 const bitly = new BitlyClient('17c1efff96bfe6bd880e21886a035bfe673b486d');
 
 dotenv.config();
