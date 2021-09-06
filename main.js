@@ -33,6 +33,8 @@ app.listen(PORT, () => {
     access_token_secret: tokens.ACCESS_TOKEN_SECRET,
     timeout_ms: 60 * 1000
   });
+
+  let portID = 1238 || process.env.PORT;
   
   var stream = downloader.stream('statuses/filter', { track: ['@baixesaporra'] });
   stream.on('tweet', tweetEvent);
@@ -48,6 +50,9 @@ app.listen(PORT, () => {
   
     var tweet_owner_screenname = tweet.in_reply_to_screen_name;
     var tweet_reply_id = tweet.in_reply_to_status_id_str;
+
+    if(tweet_reply_id == null) {}
+
     var tweet_id = tweet.id_str;
 
     if(tweet.in_reply_to_screen_name == "baixesaporra") return false;
@@ -57,8 +62,6 @@ app.listen(PORT, () => {
     console.log("")
     console.log(`Tweet url: ${replying_url}`)
     console.log("")
-  
-    let portID = 1238 || process.env.PORT;
   
     const subprocess = youtubedl.raw(replying_url, { dumpSingleJson: true }, { pid: portID });
     
@@ -91,127 +94,127 @@ app.listen(PORT, () => {
       
       async function processLine(line) { // here's where we do something with a line
       
-          if (line[line.length-1] == '\r') line=line.substr(0,line.length-1); // discard CR (0x0D)
-      
-          if (line.length > 0) { // ignore empty lines
-            var obj = JSON.parse(line); // parse the JSON
-  
-            console.log(obj)
-  
-            protocols = [];
+        if (line[line.length-1] == '\r') line=line.substr(0,line.length-1); // discard CR (0x0D)
+    
+        if (line.length > 0) { // ignore empty lines
+          var obj = JSON.parse(line); // parse the JSON
 
-            obj.formats.forEach(format => {
-              if(format.protocol == "https") {
+          console.log(obj)
 
-                var resolution = `(${format.height}x${format.width})`;
+          protocols = [];
 
-                if(resolution == "(undefinedxundefined)") resolution = ""
+          obj.formats.forEach(format => {
+            if(format.protocol == "https") {
 
-                var pushData = {
-                  url: format.url,
-                  resolution: resolution
-                }
+              var resolution = `(${format.height}x${format.width})`;
 
-                console.log(pushData);
+              if(resolution == "(undefinedxundefined)") resolution = ""
 
-                protocols.push(pushData);
+              var pushData = {
+                url: format.url,
+                resolution: resolution
               }
-              else return false;
-            })
 
-            async function shortenUrl(link) {
-              const response = await bitly.shorten(link);
-              return response.link;
+              console.log(pushData);
+
+              protocols.push(pushData);
             }
-  
-            reply = async function(link) {
+            else return false;
+          })
 
-              downloader.get('followers/ids', { screen_name: 'baixesaporra' },  function (err, data, response) {
-                var ids = data.ids;
-
-                console.log("")
-                console.log(ids)
-                console.log("")
-
-                var id_list = [];
-
-                ids.forEach(id => {
-                  id_list.push(id);
-                });
-
-                var id_in_list = id_list.includes(tweet.user.id)
-
-                if(id_in_list == true) {
-                  var res = {
-                    status: `Baixei, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar seu vídeo: ` + `\n${link}`,
-                    in_reply_to_status_id: '' + tweet_id
-                  };
-                
-                  downloader.post('statuses/update', res,
-                    function(err, data, response) {
-                      console.log(data);
-                    }
-                  );
-                }
-                else {
-                  var res = {
-                    status: `Ei, patrão, @${tweet.user.screen_name}, você precisa me seguir pra eu te ajudar`,
-                    in_reply_to_status_id: '' + tweet_id
-                  };
-                
-                  downloader.post('statuses/update', res,
-                    function(err, data, response) {
-                      console.log(data);
-                    }
-                  );
-                }
-              })
-            }
-
-            async function posting_results(urls) {
-
-              console.log("")
-              console.log("URLS")
-              console.log(urls)
-              console.log("")
-
-              var string_list = [];
-
-              urls.forEach(url => [
-                string_list.push(`${url.shortenUrl} ${url.resolution}`)
-              ])
-
-              var url_string = string_list.join("\n");
-
-              reply(url_string);
-            }
-
-            async function protocol_shortening() {
-
-              var urls = [];
-
-              var length = protocols.length;
-
-              protocols.forEach(async protocol => {
-                var url = await shortenUrl(protocol.url);
-                urls.push({
-                  shortenUrl: url,
-                  resolution: `${protocol.resolution}`
-                });
-                console.log("")
-                console.log(url)
-                console.log(`Total de urls: ${urls.length}/${protocols.length}`)
-                console.log("")
-
-                if(urls.length === length) {
-                  posting_results(urls);
-                }
-              })
-            }
-
-            protocol_shortening();
+          async function shortenUrl(link) {
+            const response = await bitly.shorten(link);
+            return response.link;
           }
-      }
+
+          reply = async function(link) {
+
+            downloader.get('followers/ids', { screen_name: 'baixesaporra' },  function (err, data, response) {
+              var ids = data.ids;
+
+              console.log("")
+              console.log(ids)
+              console.log("")
+
+              var id_list = [];
+
+              ids.forEach(id => {
+                id_list.push(id);
+              });
+
+              var id_in_list = id_list.includes(tweet.user.id)
+
+              if(id_in_list == true) {
+                var res = {
+                  status: `Baixei, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar seu vídeo: ` + `\n${link}`,
+                  in_reply_to_status_id: '' + tweet_id
+                };
+              
+                downloader.post('statuses/update', res,
+                  function(err, data, response) {
+                    console.log(data);
+                  }
+                );
+              }
+              else {
+                var res = {
+                  status: `Ei, patrão, @${tweet.user.screen_name}, você precisa me seguir pra eu te ajudar, então me siga, apague esse tweet e me marque na publicação novamente 😁`,
+                  in_reply_to_status_id: '' + tweet_id
+                };
+              
+                downloader.post('statuses/update', res,
+                  function(err, data, response) {
+                    console.log(data);
+                  }
+                );
+              }
+            })
+          }
+
+          async function posting_results(urls) {
+
+            console.log("")
+            console.log("URLS")
+            console.log(urls)
+            console.log("")
+
+            var string_list = [];
+
+            urls.forEach(url => [
+              string_list.push(`${url.shortenUrl} ${url.resolution}`)
+            ])
+
+            var url_string = string_list.join("\n");
+
+            reply(url_string);
+          }
+
+          async function protocol_shortening() {
+
+            var urls = [];
+
+            var length = protocols.length;
+
+            protocols.forEach(async protocol => {
+              var url = await shortenUrl(protocol.url);
+              urls.push({
+                shortenUrl: url,
+                resolution: `${protocol.resolution}`
+              });
+              console.log("")
+              console.log(url)
+              console.log(`Total de urls: ${urls.length}/${protocols.length}`)
+              console.log("")
+
+              if(urls.length === length) {
+                posting_results(urls);
+              }
+            })
+          }
+
+          protocol_shortening();
+        }
+    }
     });
   };
 });
