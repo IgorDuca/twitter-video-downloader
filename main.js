@@ -145,7 +145,7 @@ app.listen(PORT, () => {
 
                 if(id_in_list == true) {
 
-                  var string = `Baixei, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar seu vídeo: ` + `\n${link}`
+                  var string = `Baixei seu vídeo do YouTube, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar seu vídeo: ` + `\n${link}`
 
                   var res = {
                     status: string,
