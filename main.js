@@ -101,7 +101,9 @@ app.listen(PORT, () => {
             obj.formats.forEach(format => {
               if(format.protocol == "https") {
 
-                var resolution = `${format.height}x${format.width}`;
+                var resolution = `(${format.height}x${format.width})`;
+
+                if(resolution == "(undefinedxundefined)") resolution = ""
 
                 var pushData = {
                   url: format.url,
@@ -138,28 +140,28 @@ app.listen(PORT, () => {
                 var id_in_list = id_list.includes(tweet.user.id)
 
                 if(id_in_list == true) {
-                  var res = {
-                    status: `Baixei, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar seu vídeo: ` + `\n${link}`,
-                    in_reply_to_status_id: '' + tweet_id
-                  };
+                  // var res = {
+                  //   status: `Baixei, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar seu vídeo: ` + `\n${link}`,
+                  //   in_reply_to_status_id: '' + tweet_id
+                  // };
                 
-                  downloader.post('statuses/update', res,
-                    function(err, data, response) {
-                      console.log(data);
-                    }
-                  );
+                  // downloader.post('statuses/update', res,
+                  //   function(err, data, response) {
+                  //     console.log(data);
+                  //   }
+                  // );
                 }
                 else {
-                  var res = {
-                    status: `Ei, patrão, @${tweet.user.screen_name}, você precisa me seguir pra eu te ajudar`,
-                    in_reply_to_status_id: '' + tweet_id
-                  };
+                  // var res = {
+                  //   status: `Ei, patrão, @${tweet.user.screen_name}, você precisa me seguir pra eu te ajudar`,
+                  //   in_reply_to_status_id: '' + tweet_id
+                  // };
                 
-                  downloader.post('statuses/update', res,
-                    function(err, data, response) {
-                      console.log(data);
-                    }
-                  );
+                  // downloader.post('statuses/update', res,
+                  //   function(err, data, response) {
+                  //     console.log(data);
+                  //   }
+                  // );
                 }
               })
             }
@@ -174,7 +176,7 @@ app.listen(PORT, () => {
               var string_list = [];
 
               urls.forEach(url => [
-                string_list.push(`${url.shortenUrl} (${url.resolution})`)
+                string_list.push(`${url.shortenUrl} ${url.resolution}`)
               ])
 
               var url_string = string_list.join("\n");
