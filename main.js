@@ -112,15 +112,15 @@ app.listen(PORT, () => {
 
                 console.log(pushData);
 
-                all_protocols.forEach(all => {
-                  if(all.resolution == resolution) return false;
-                  else {
-                    all_protocols.push(pushData);
-                  }
-                })
+                protocols.push(pushData);
               }
               else return false;
             })
+
+            console.log("")
+            console.log("PROTOCOLOS")
+            console.log(protocols)
+            console.log("")
 
             async function shortenYoutubeUrl(link) {
               const response = await bitly.shorten(link);
@@ -144,14 +144,17 @@ app.listen(PORT, () => {
                 var id_in_list = id_list.includes(tweet.user.id)
 
                 if(id_in_list == true) {
+
+                  var string = `Baixei, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar seu vídeo: ` + `\n${link}`
+
                   var res = {
-                    status: `Baixei, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar seu vídeo: ` + `\n${link}`,
+                    status: string,
                     in_reply_to_status_id: '' + tweet_id
                   };
-                
+
                   downloader.post('statuses/update', res,
                     function(err, data, response) {
-                      console.log(data);
+                      console.log(data)
                     }
                   );
                 }
@@ -176,10 +179,26 @@ app.listen(PORT, () => {
               console.log("URLS")
               console.log(urls)
               console.log("")
+
+              function getRandom(arr, n) {
+                var result = new Array(n),
+                    len = arr.length,
+                    taken = new Array(len);
+                if (n > len)
+                    throw new RangeError("getRandom: more elements taken than available");
+                while (n--) {
+                    var x = Math.floor(Math.random() * len);
+                    result[n] = arr[x in taken ? taken[x] : x];
+                    taken[x] = --len in taken ? taken[len] : len;
+                }
+                return result;
+              }
+
+              var selected_urls = getRandom(urls, 4);
   
               var string_list = [];
   
-              urls.forEach(url => [
+              selected_urls.forEach(url => [
                 string_list.push(`${url.shortenUrl} ${url.resolution}`)
               ])
   
