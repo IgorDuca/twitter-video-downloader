@@ -9,7 +9,9 @@ const readline = require('readline');
 const axios = require("axios");
 const express = require("express");
 const cors = require("cors");
+
 const BitlyClient = require('bitly').BitlyClient;
+const { pid } = require("process");
 const bitly = new BitlyClient('17c1efff96bfe6bd880e21886a035bfe673b486d');
 
 dotenv.config();
@@ -91,16 +93,14 @@ app.listen(PORT, () => {
 
             console.log(obj)
 
-            var all_protocols = [];
-            var protocols = [];
+            protocols = [];
 
             obj.formats.forEach(format => {
               if(format.protocol == "https") {
 
                 var resolution = `(${format.height}x${format.width})`;
 
-                if(resolution == "(undefinedxundefined)") return false;
-                if(resolution == "(nullxnull)") return false;
+                if(resolution == "(undefinedxundefined)") resolution = ""
 
                 var pushData = {
                   url: format.url,
@@ -113,11 +113,6 @@ app.listen(PORT, () => {
               }
               else return false;
             })
-
-            console.log("")
-            console.log("PROTOCOLOS")
-            console.log(protocols)
-            console.log("")
 
             async function shortenYoutubeUrl(link) {
               const response = await bitly.shorten(link);
@@ -141,17 +136,14 @@ app.listen(PORT, () => {
                 var id_in_list = id_list.includes(tweet.user.id)
 
                 if(id_in_list == true) {
-
-                  var string = `Baixei seu vídeo, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar: ` + `\n${link}`
-
                   var res = {
-                    status: string,
+                    status: `Baixei, @${tweet.user.screen_name}, você pode usar qualquer um desses links pra baixar seu vídeo: ` + `\n${link}`,
                     in_reply_to_status_id: '' + tweet_id
                   };
-
+                
                   downloader.post('statuses/update', res,
                     function(err, data, response) {
-                      console.log(data)
+                      console.log(data);
                     }
                   );
                 }
@@ -167,6 +159,13 @@ app.listen(PORT, () => {
                     }
                   );
                 }
+
+                downloader.post('statuses/update', res,
+                  function(err, data, response) {
+                    console.log(data);
+                  }
+                );
+
               })
             }
 
@@ -176,26 +175,10 @@ app.listen(PORT, () => {
               console.log("URLS")
               console.log(urls)
               console.log("")
-
-              function getRandom(arr, n) {
-                var result = new Array(n),
-                    len = arr.length,
-                    taken = new Array(len);
-                if (n > len)
-                    throw new RangeError("getRandom: more elements taken than available");
-                while (n--) {
-                    var x = Math.floor(Math.random() * len);
-                    result[n] = arr[x in taken ? taken[x] : x];
-                    taken[x] = --len in taken ? taken[len] : len;
-                }
-                return result;
-              }
-
-              var selected_urls = getRandom(urls, 4);
   
               var string_list = [];
   
-              selected_urls.forEach(url => [
+              urls.forEach(url => [
                 string_list.push(`${url.shortenUrl} ${url.resolution}`)
               ])
   
