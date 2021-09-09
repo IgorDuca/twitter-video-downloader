@@ -12,7 +12,7 @@ const cors = require("cors");
 
 const BitlyClient = require('bitly').BitlyClient;
 const { pid } = require("process");
-const bitly = new BitlyClient('17c1efff96bfe6bd880e21886a035bfe673b486d');
+const bitly = new BitlyClient('4a1bb91b0d68df47e685eea12815ebeb48dd445a');
 
 dotenv.config();
 
@@ -115,7 +115,9 @@ app.listen(PORT, () => {
             })
 
             async function shortenYoutubeUrl(link) {
-              const response = await bitly.shorten(link);
+              const response = await bitly.shorten(link).catch(error => {
+                console.log(error)
+              });
               return response.link;
             }
 
@@ -170,7 +172,6 @@ app.listen(PORT, () => {
             }
 
             async function posting_yt_results(urls) {
-
               console.log("")
               console.log("URLS")
               console.log(urls)
@@ -178,9 +179,12 @@ app.listen(PORT, () => {
   
               var string_list = [];
   
-              urls.forEach(url => [
-                string_list.push(`${url.shortenUrl} ${url.resolution}`)
-              ])
+              function add_selected_link() {
+                var link = urls[Math.floor(Math.random()*urls.length)];
+                string_list.push(`${link.shortenUrl} ${link.resolution}`)
+              }
+  
+              for (var i = 1; i < 5; i++) add_selected_link(i);
   
               var url_string = string_list.join("\n");
   
@@ -286,7 +290,9 @@ app.listen(PORT, () => {
           })
 
           async function shortenUrl(link) {
-            const response = await bitly.shorten(link);
+            const response = await bitly.shorten(link).catch(error => {
+              console.log(error);
+            });
             return response.link;
           }
 
