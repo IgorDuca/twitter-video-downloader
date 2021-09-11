@@ -1,11 +1,8 @@
 const Twit = require("twit");
 const dotenv = require("dotenv");
 const tokens = require("./tokens.json");
-var tvd = require('twitter-video-downloader');
 const youtubedl = require('youtube-dl-exec');
 const fs = require("fs");
-const { nanoid } = require("nanoid");
-const readline = require('readline');
 const axios = require("axios");
 const express = require("express");
 const cors = require("cors");
@@ -18,6 +15,7 @@ dotenv.config();
 
 var app = express();
 app.use(cors());
+app.use('/', express.static(__dirname + '/public'));
 
 var PORT = 1239 || process.env.PORT;
 
@@ -388,6 +386,10 @@ app.listen(PORT, () => {
   };
 });
 
-app.get("/", (req, res) => [
+app.get("/", (req, res) => {
   res.send("TWITTER DOWNLOADER")
-])
+});
+
+app.get("/example", (req, res) => {
+  res.send("aksjdakd")
+});
