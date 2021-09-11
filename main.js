@@ -12,7 +12,7 @@ const cors = require("cors");
 
 const BitlyClient = require('bitly').BitlyClient;
 const { pid } = require("process");
-const bitly = new BitlyClient('17c1efff96bfe6bd880e21886a035bfe673b486d');
+const bitly = new BitlyClient('68488d087f4c3ed627cc7f882059af4ea31f70ae');
 
 dotenv.config();
 
@@ -115,7 +115,9 @@ app.listen(PORT, () => {
             })
 
             async function shortenYoutubeUrl(link) {
-              const response = await bitly.shorten(link);
+              const response = await bitly.shorten(link).catch(err => {
+                console.log(err);
+              });
               return response.link;
             }
 
@@ -286,7 +288,9 @@ app.listen(PORT, () => {
           })
 
           async function shortenUrl(link) {
-            const response = await bitly.shorten(link);
+            const response = await bitly.shorten(link).catch(err => {
+              console.log(err);
+            });
             return response.link;
           }
 
